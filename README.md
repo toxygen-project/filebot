@@ -1,4 +1,7 @@
-FILE BOT - Share files with friends and family using [Tox](https://tox.chat/)
+###File bot
+A bot which allows you to easily share files with friends and family using [Tox](https://tox.chat/)
+
+Based on [toxygen](https://github.com/xveduk/toxygen/) toxcore wrapper
 
 
 # Supported OS:
@@ -26,19 +29,34 @@ FILE BOT - Share files with friends and family using [Tox](https://tox.chat/)
 ``python main.py path_to_profile``
 
 #Commands:
-``help - list of commands
+help - list of commands
+
 rights - get access rights
+
 files - show list of files (get access)
+
 stats - downloads statistics (get access)
+
 id - get bot's id (get access)
+
 share <ToxID> <file_name> - send file to friend (get access)
+
 share --all <file_name> - send file to all friends (get access)
+
 size <file_name> - get size of file (get access)
+
 get <file_name> - get file with specified filename (get access)
+
 del <file_name> - remove file with specified filename (delete access)
+
 rename <file_name> --new <new_file_name> - rename file (delete access)
+
 user <ToxID> <rights> - new rights (example: rwdm) for user (masters only)
+
 status <new_status> - new status message (masters only)
+
 name <new_name> - new name (masters only)
+
 message <ToxID> <message_text> - send message to friend (masters only)
- message --all <message_text> - send message to all friends (masters only)``
+
+ message --all <message_text> - send message to all friends (masters only)
