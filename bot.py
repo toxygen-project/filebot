@@ -90,19 +90,20 @@ class Bot(Singleton):
             self.send_message(friend_num, """help - list of commands\n
             rights - get access rights\n
             files - show list of files (get access)\n
-            stats - downloads statistics (get access)\n
             id - get bot's id (get access)\n
             share <ToxID> <file_name> - send file to friend (get access)\n
             share --all <file_name> - send file to all friends (get access)\n
             size <file_name> - get size of file (get access)\n
             get <file_name> - get file with specified filename (get access)\n
+            stats - show statistics (write access)\n
             del <file_name> - remove file with specified filename (delete access)\n
             rename <file_name> --new <new_file_name> - rename file (delete access)\n
             user <ToxID> <rights> - new rights (example: rwdm) for user (masters only)\n
             status <new_status> - new status message (masters only)\n
             name <new_name> - new name (masters only)\n
             message <ToxID> <message_text> - send message to friend (masters only)\n
-            message --all <message_text> - send message to all friends (masters only)
+            message --all <message_text> - send message to all friends (masters only)\n
+            stop - stop bot (masters only)\n
             Users with write access can send files to bot.
             """.encode('utf-8'))
         elif message == 'rights':
@@ -227,7 +228,7 @@ class Bot(Singleton):
                     if self._tox.friend_get_connection_status(num):
                         self.send_message(num, s.encode('utf-8'))
         elif message == 'stats':
-            if id not in settings['read']:
+            if id not in settings['write']:
                 self.send_message(friend_num, 'Not enough rights'.encode('utf-8'))
             else:
                 s = ''
@@ -240,7 +241,21 @@ class Bot(Singleton):
                     s = 'Nothing found'
                 else:
                     s += u'Downloads count: {}'.format(sum(self._downloads.values()))
+                count = 0
+                for num in self._tox.self_get_friend_list():
+                    if self._tox.friend_get_connection_status(num):
+                        count += 1
+                s = 'Friends: {}\nOnline friends: {}\nFiles:\n'.format(self._tox.self_get_friend_list_size(), count) + s
                 self.send_message(friend_num, s.encode('utf-8'), TOX_MESSAGE_TYPE['NORMAL'])
+        elif message == 'stop':
+            if id in settings['master']:
+                settings.save()
+                data = self._tox.get_savedata()
+                ProfileHelper.save_profile(data)
+                del self._tox
+                raise SystemExit()
+            else:
+                self.send_message(friend_num, 'Not enough rights'.encode('utf-8'))
         else:
             self.send_message(friend_num, 'Wrong command'.encode('utf-8'))
 

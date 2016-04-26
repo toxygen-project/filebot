@@ -22,10 +22,11 @@ Based on [toxygen](https://github.com/xveduk/toxygen/) toxcore wrapper
 
 ### Linux
 
-1. [Download file bot](https://github.com/ingvar1995/filebot/archive/master.zip)
-2. Unpack archive 
-3. Install [toxcore](https://github.com/irungentoo/toxcore/blob/master/INSTALL.md) in your system
-4. Run app:
+1. Install Python2.7: ``sudo apt-get install python2.7``
+2. [Download file bot](https://github.com/ingvar1995/filebot/archive/master.zip)
+3. Unpack archive 
+4. Install [toxcore](https://github.com/irungentoo/toxcore/blob/master/INSTALL.md) in your system
+5. Run app:
 ``python main.py path_to_profile``
 
 #Commands:
@@ -34,8 +35,6 @@ help - list of commands
 rights - get access rights
 
 files - show list of files (get access)
-
-stats - downloads statistics (get access)
 
 id - get bot's id (get access)
 
@@ -46,6 +45,8 @@ share --all <file_name> - send file to all friends (get access)
 size <file_name> - get size of file (get access)
 
 get <file_name> - get file with specified filename (get access)
+
+stats - show statistics (write access)
 
 del <file_name> - remove file with specified filename (delete access)
 
@@ -59,4 +60,9 @@ name <new_name> - new name (masters only)
 
 message <ToxID> <message_text> - send message to friend (masters only)
 
- message --all <message_text> - send message to all friends (masters only)
+message --all <message_text> - send message to all friends (masters only)
+
+stop - stop bot (masters only)
+
+
+Users with write access can send files to bot.

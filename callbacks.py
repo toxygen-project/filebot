@@ -46,7 +46,8 @@ def friend_request(tox, public_key, message, message_size, user_data):
     Called when user get new friend request
     """
     profile = Bot.get_instance()
-    tox_id = bin_to_string(public_key, TOX_PUBLIC_KEY_SIZE)
+    key = ''.join(chr(x) for x in public_key[:TOX_PUBLIC_KEY_SIZE])
+    tox_id = bin_to_string(key, TOX_PUBLIC_KEY_SIZE)
     profile.process_friend_request(tox_id, message.decode('utf-8'))
 
 # -----------------------------------------------------------------------------------------------------------------
