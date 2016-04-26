@@ -13,6 +13,7 @@ class FileBot(object):
         self.stop = False
         self.profile = None
         self.path = path
+        print 'FileBot v0.1'
 
     def main(self):
         self.tox = tox_factory(ProfileHelper.open_profile(self.path))
@@ -28,11 +29,10 @@ class FileBot(object):
                 self.tox.iterate()
                 time.sleep(self.tox.iteration_interval() / 1000.0)
         except KeyboardInterrupt:
-            print ''
-        settings.save()
-        data = self.tox.get_savedata()
-        ProfileHelper.save_profile(data)
-        del self.tox
+            settings.save()
+            data = self.tox.get_savedata()
+            ProfileHelper.save_profile(data)
+            del self.tox
 
 
 if __name__ == '__main__':

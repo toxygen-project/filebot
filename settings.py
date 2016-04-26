@@ -16,11 +16,13 @@ class Settings(Singleton, dict):
             super(self.__class__, self).__init__(json.loads(data))
         else:
             super(self.__class__, self).__init__(Settings.get_default_settings())
-            self.save()
         self['read'] = map(lambda x: x[:TOX_PUBLIC_KEY_SIZE * 2], set(self['read']))
         self['write'] = map(lambda x: x[:TOX_PUBLIC_KEY_SIZE * 2], set(self['write']))
         self['delete'] = map(lambda x: x[:TOX_PUBLIC_KEY_SIZE * 2], set(self['delete']))
         self['master'] = map(lambda x: x[:TOX_PUBLIC_KEY_SIZE * 2], set(self['master']))
+        if self['folder'][-1] == '/' or self['folder'][-1] == '\\':
+            self['folder'] = self['folder'][:-1]
+        self.save()
 
     @staticmethod
     def get_default_settings():

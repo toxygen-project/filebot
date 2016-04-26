@@ -46,6 +46,8 @@ size <file_name> - get size of file (get access)
 
 get <file_name> - get file with specified filename (get access)
 
+get --all - get all files (get access)
+
 stats - show statistics (write access)
 
 del <file_name> - remove file with specified filename (delete access)

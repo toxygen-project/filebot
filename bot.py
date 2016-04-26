@@ -17,7 +17,7 @@ class Bot(Singleton):
         super(Bot, self).__init__()
         self._tox = tox
         self._file_transfers = {}  # dict of file transfers. key - tuple (friend_number, file_number)
-        self._downloads = defaultdict(int)
+        self._downloads = defaultdict(int)  # defaultdict of downloads count
 
     # -----------------------------------------------------------------------------------------------------------------
     # Edit current user's data
@@ -35,10 +35,10 @@ class Bot(Singleton):
 
     def send_message(self, number, message, message_type=TOX_MESSAGE_TYPE['NORMAL']):
         """
-        Message splitting
+        Send message with message splitting
         :param number: friend's number
-        :param message_type: type of message
         :param message: message text
+        :param message_type: type of message
         """
         while len(message) > TOX_MAX_MESSAGE_LENGTH:
             size = TOX_MAX_MESSAGE_LENGTH * 4 / 5
@@ -65,7 +65,8 @@ class Bot(Singleton):
         id = self._tox.friend_get_public_key(friend_num)
         settings = Settings.get_instance()
         message = message.strip()
-        if message == 'files':
+        # message parsing
+        if message == 'files':  # get file list
             if id in settings['read']:
                 s = ''
                 for f in os.listdir(settings['folder']):
@@ -77,17 +78,23 @@ class Bot(Singleton):
                 self.send_message(friend_num, s.encode('utf-8'), TOX_MESSAGE_TYPE['NORMAL'])
             else:
                 self.send_message(friend_num, 'Not enough rights'.encode('utf-8'))
-        elif message.startswith('get '):
+        elif message.startswith('get '):  # download file or all files
             if id in settings['read']:
-                path = settings['folder'] + '/' + unicode(message[4:])
-                if os.path.exists(unicode(path)):
-                    self.send_file(unicode(path), friend_num)
+                if '--all' not in message:
+                    path = settings['folder'] + '/' + unicode(message[4:])
+                    if os.path.exists(unicode(path)):
+                        self.send_file(unicode(path), friend_num)
+                    else:
+                        self.send_message(friend_num, 'Wrong file name'.encode('utf-8'))
                 else:
-                    self.send_message(friend_num, 'Wrong file name'.encode('utf-8'))
+                    for f in os.listdir(settings['folder']):
+                        if os.path.isfile(os.path.join(settings['folder'], f)):
+                            self.send_file(unicode(os.path.join(settings['folder'], f)), friend_num)
             else:
                 self.send_message(friend_num, 'Not enough rights'.encode('utf-8'))
-        elif message == 'help':
-            self.send_message(friend_num, """help - list of commands\n
+        elif message == 'help':  # help
+            self.send_message(friend_num, """
+            help - list of commands\n
             rights - get access rights\n
             files - show list of files (get access)\n
             id - get bot's id (get access)\n
@@ -95,6 +102,7 @@ class Bot(Singleton):
             share --all <file_name> - send file to all friends (get access)\n
             size <file_name> - get size of file (get access)\n
             get <file_name> - get file with specified filename (get access)\n
+            get --all - get all files (get access)\n
             stats - show statistics (write access)\n
             del <file_name> - remove file with specified filename (delete access)\n
             rename <file_name> --new <new_file_name> - rename file (delete access)\n
@@ -106,13 +114,13 @@ class Bot(Singleton):
             stop - stop bot (masters only)\n
             Users with write access can send files to bot.
             """.encode('utf-8'))
-        elif message == 'rights':
+        elif message == 'rights':  # get rights
             self.send_message(friend_num, 'Read: {}\nWrite: {}\nDelete: {}\nMaster: {}'
-                              .format('Yes' if id in settings['read'] else 'No',
+                              .format('Yes' if id in settings['read'] else 'No, sorry',
                                       'Yes' if id in settings['write'] else 'No',
                                       'Yes' if id in settings['delete'] else 'No',
                                       'Yes, sir!' if id in settings['master'] else 'No'))
-        elif message.startswith('del '):
+        elif message.startswith('del '):  # delete file
             if id in settings['delete']:
                 path = settings['folder'] + '/' + message[4:]
                 if os.path.exists(path):
@@ -122,7 +130,7 @@ class Bot(Singleton):
                     self.send_message(friend_num, 'Wrong file name'.encode('utf-8'))
             else:
                 self.send_message(friend_num, 'Not enough rights'.encode('utf-8'))
-        elif message.startswith('user '):
+        elif message.startswith('user '):  # new rights for user
             if id not in settings['master']:
                 self.send_message(friend_num, 'Not enough rights'.encode('utf-8'))
                 return
@@ -149,17 +157,17 @@ class Bot(Singleton):
             settings.save()
             self.send_message(friend_num, 'Updated'.encode('utf-8'))
 
-        elif message.startswith('status '):
+        elif message.startswith('status '):  # new status
             if id not in settings['master']:
                 self.send_message(friend_num, 'Not enough rights'.encode('utf-8'))
             else:
                 self.set_status_message(message[7:])
-        elif message.startswith('name '):
+        elif message.startswith('name '):  # new name
             if id not in settings['master']:
                 self.send_message(friend_num, 'Not enough rights'.encode('utf-8'))
             else:
                 self.set_name(message[5:])
-        elif message.startswith('share '):
+        elif message.startswith('share '):  # send file to friend (all friends)
             if id in settings['read']:
                 if '--all' not in message:
                     fl = ' '.join(message.split(' ')[2:])
@@ -177,7 +185,7 @@ class Bot(Singleton):
                             self.send_file(settings['folder'] + '/' + fl, num)
             else:
                 self.send_message(friend_num, 'Not enough rights'.encode('utf-8'))
-        elif message.startswith('rename '):
+        elif message.startswith('rename '):  # rename existing file
             ind = message.index(' --new ')
             old = message[7:ind]
             new = message[ind + 7:]
@@ -189,13 +197,13 @@ class Bot(Singleton):
                     self.send_message(friend_num, 'File not found'.encode('utf-8'))
             else:
                 self.send_message(friend_num, 'Not enough rights'.encode('utf-8'))
-        elif message == 'id':
+        elif message == 'id':  # get TOX ID
             if id in settings['read']:
                 tox_id = self._tox.self_get_address()
                 self.send_message(friend_num, tox_id.encode('utf-8'))
             else:
                 self.send_message(friend_num, 'Not enough rights'.encode('utf-8'))
-        elif message.startswith('size '):
+        elif message.startswith('size '):  # get file size
             path = unicode(settings['folder'] + '/' + message[5:])
             if id not in settings['read']:
                 self.send_message(friend_num, 'Not enough rights'.encode('utf-8'))
@@ -209,9 +217,9 @@ class Bot(Singleton):
                     size = u'{} KB'.format(bytes_size / 1024)
                 else:
                     size = u'{} MB'.format(bytes_size / 1024 * 1024)
-                s = u'size: {} ({} bytes)'.format(size, bytes_size)
+                s = u'Size: {} ({} bytes)'.format(size, bytes_size)
                 self.send_message(friend_num, s.encode('utf-8'))
-        elif message.startswith('message '):
+        elif message.startswith('message '):  # send message to friend (all friends)
             if id not in settings['master']:
                 self.send_message(friend_num, 'Not enough rights'.encode('utf-8'))
             elif '--all' not in message:
@@ -227,7 +235,7 @@ class Bot(Singleton):
                 for num in self._tox.self_get_friend_list():
                     if self._tox.friend_get_connection_status(num):
                         self.send_message(num, s.encode('utf-8'))
-        elif message == 'stats':
+        elif message == 'stats':  # get stats
             if id not in settings['write']:
                 self.send_message(friend_num, 'Not enough rights'.encode('utf-8'))
             else:
@@ -247,7 +255,7 @@ class Bot(Singleton):
                         count += 1
                 s = 'Friends: {}\nOnline friends: {}\nFiles:\n'.format(self._tox.self_get_friend_list_size(), count) + s
                 self.send_message(friend_num, s.encode('utf-8'), TOX_MESSAGE_TYPE['NORMAL'])
-        elif message == 'stop':
+        elif message == 'stop':  # stop bot
             if id in settings['master']:
                 settings.save()
                 data = self._tox.get_savedata()
@@ -269,8 +277,9 @@ class Bot(Singleton):
         :param tox_id: tox id of contact
         :param message: message
         """
-        self._tox.friend_add_norequest(tox_id)  # num - friend number
+        self._tox.friend_add_norequest(tox_id)
         settings = Settings.get_instance()
+        # give friend default rights
         if 'r' in settings['auto_rights'] and tox_id not in settings['read']:
             settings['read'].append(tox_id)
         if 'w' in settings['auto_rights'] and tox_id not in settings['write']:
@@ -341,6 +350,7 @@ class Bot(Singleton):
         """
         Send file to current active friend
         :param path: file path
+        :param friend_number: friend_number
         """
         self._downloads[path] += 1
         st = SendTransfer(path, self._tox, friend_number)
