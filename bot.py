@@ -3,7 +3,7 @@ import os
 from settings import *
 from toxcore_enums_and_consts import *
 from ctypes import *
-from util import log, Singleton
+from util import Singleton
 from file_transfers import *
 from collections import defaultdict
 
@@ -62,7 +62,7 @@ class Bot(Singleton):
         :param friend_num: number of friend who sent message
         :param message: text of message
         """
-        id = self._tox.friend_get_public_key(friend_num)
+        id = self._tox.friend_get_public_key(friend_num)  # public key of user
         settings = Settings.get_instance()
         message = message.strip()
         # message parsing
@@ -277,6 +277,7 @@ class Bot(Singleton):
         :param tox_id: tox id of contact
         :param message: message
         """
+        print 'Friend request:', message
         self._tox.friend_add_norequest(tox_id)
         settings = Settings.get_instance()
         # give friend default rights

@@ -1,4 +1,3 @@
-from platform import system
 import json
 import os
 import locale

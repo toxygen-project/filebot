@@ -2,6 +2,7 @@ import random
 
 
 class Node(object):
+
     def __init__(self, ip, port, tox_key, rand):
         self._ip, self._port, self._tox_key, self.rand = ip, port, tox_key, rand
 
@@ -80,8 +81,3 @@ def node_generator():
     arr = sorted(nodes, key=lambda x: x.rand)[:4]
     for elem in arr:
         yield elem.get_data()
-
-
-if __name__ == "__main__":
-    for elem in node_generator():
-        print str(elem)

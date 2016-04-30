@@ -14,10 +14,18 @@ Based on [toxygen](https://github.com/xveduk/toxygen/) toxcore wrapper
 
 1. [Download and install latest Python 2.7](https://www.python.org/downloads/windows/)
 2. [Download file bot](https://github.com/ingvar1995/filebot/archive/master.zip)
-3. Unpack archive  
-4. Download latest [libtox.dll](https://build.tox.chat/view/libtoxcore/job/libtoxcore_build_windows_x86_shared_release/lastSuccessfulBuild/artifact/libtoxcore_build_windows_x86_shared_release.zip) build, download latest [libsodium.a](https://build.tox.chat/view/libsodium/job/libsodium_build_windows_x86_static_release/lastSuccessfulBuild/artifact/libsodium_build_windows_x86_static_release.zip) build, put it into libs\
+3. Unpack archive
+4. Download latest libtox.dll build, download latest libsodium.a build, put it into \libs\
 5. Run app:
 ``python main.py path_to_profile``
+
+[libtox.dll for 32-bit Python](https://build.tox.chat/view/libtoxcore/job/libtoxcore_build_windows_x86_shared_release/lastSuccessfulBuild/artifact/libtoxcore_build_windows_x86_shared_release.zip)
+
+[libtox.dll for 64-bit Python](https://build.tox.chat/view/libtoxcore/job/libtoxcore_build_windows_x86-64_shared_release/lastSuccessfulBuild/artifact/libtoxcore_build_windows_x86-64_shared_release.zip)
+
+[libsodium.a for 32-bit Python](https://build.tox.chat/view/libsodium/job/libsodium_build_windows_x86_static_release/lastSuccessfulBuild/artifact/libsodium_build_windows_x86_static_release.zip)
+
+[libsodium.a for 64-bit Python](https://build.tox.chat/view/libsodium/job/libsodium_build_windows_x86-64_static_release/lastSuccessfulBuild/artifact/libsodium_build_windows_x86-64_static_release.zip)
 
 
 ### Linux
