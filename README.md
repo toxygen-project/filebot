@@ -38,6 +38,7 @@ Based on [toxygen](https://github.com/xveduk/toxygen/) toxcore wrapper
 ``python main.py path_to_profile``
 
 #Commands:
+```
 help - list of commands
 
 rights - get access rights
@@ -73,6 +74,9 @@ message <ToxID> <message_text> - send message to friend (masters only)
 message --all <message_text> - send message to all friends (masters only)
 
 stop - stop bot (masters only)
+```
 
 
 Users with write access can send files to bot.
+
+Example of settings is [here](/settings.json)
