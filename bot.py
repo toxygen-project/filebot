@@ -50,7 +50,7 @@ class Bot(Singleton):
             elif '.' in last_part:
                 index = last_part.index('.')
             else:
-                index = TOX_MAX_MESSAGE_LENGTH - size
+                index = TOX_MAX_MESSAGE_LENGTH - size - 1
             index += size + 1
             self._tox.friend_send_message(number, message_type, message[:index])
             message = message[index:]
@@ -290,6 +290,8 @@ class Bot(Singleton):
         if 'm' in settings['auto_rights'] and tox_id not in settings['master']:
             settings['master'].append(tox_id)
         settings.save()
+        data = self._tox.get_savedata()
+        ProfileHelper.save_profile(data)
 
     # -----------------------------------------------------------------------------------------------------------------
     # File transfers support
