@@ -1,5 +1,5 @@
 from toxcore_enums_and_consts import TOX_FILE_KIND, TOX_FILE_CONTROL
-from os.path import basename, getsize
+from os.path import basename, getsize, remove
 from os import remove
 from time import time
 from tox import Tox
@@ -25,7 +25,7 @@ class FileTransfer(object):
         self.state = TOX_FILE_TRANSFER_STATE['RUNNING']
         self._file_number = file_number
         self._creation_time = time()
-        self._size = float(size)
+        self._size = size
         self._done = 0
 
     def set_tox(self, tox):
@@ -123,3 +123,6 @@ class ReceiveTransfer(FileTransfer):
             if position + l > self._file_size:
                 self._file_size = position + l
             self._done += l
+            if self._done > self._size:
+                self.cancel()
+                remove(self._path)

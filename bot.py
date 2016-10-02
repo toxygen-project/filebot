@@ -3,7 +3,7 @@ import os
 from settings import *
 from toxcore_enums_and_consts import *
 from ctypes import *
-from util import Singleton
+from util import Singleton, folder_size
 from file_transfers import *
 from collections import defaultdict
 
@@ -112,6 +112,7 @@ class Bot(Singleton):
             message <ToxID> <message_text> - send message to friend (masters only)\n
             message --all <message_text> - send message to all friends (masters only)\n
             stop - stop bot (masters only)\n
+            fsize <folder_size_in_MB> - set folder size in MB (masters only)\n
             Users with write access can send files to bot.
             """.encode('utf-8'))
         elif message == 'rights':  # get rights
@@ -216,7 +217,7 @@ class Bot(Singleton):
                 elif bytes_size < 1024 * 1024:
                     size = u'{} KB'.format(bytes_size / 1024)
                 else:
-                    size = u'{} MB'.format(bytes_size / 1024 * 1024)
+                    size = u'{} MB'.format(bytes_size / (1024 * 1024))
                 s = u'Size: {} ({} bytes)'.format(size, bytes_size)
                 self.send_message(friend_num, s.encode('utf-8'))
         elif message.startswith('message '):  # send message to friend (all friends)
@@ -264,6 +265,17 @@ class Bot(Singleton):
                 raise SystemExit()
             else:
                 self.send_message(friend_num, 'Not enough rights'.encode('utf-8'))
+        elif message.startswith('fsize '):
+            if id not in settings['master']:
+                self.send_message(friend_num, 'Not enough rights'.encode('utf-8'))
+            else:
+                try:
+                    size = int(message[6:])
+                    settings['size'] = max(size, 10)
+                    settings.save()
+                    self.send_message(friend_num, 'Size was set'.encode('utf-8'))
+                except:
+                    self.send_message(friend_num, 'Wrong command'.encode('utf-8'))
         else:
             self.send_message(friend_num, 'Wrong command'.encode('utf-8'))
 
@@ -307,7 +319,9 @@ class Bot(Singleton):
         """
         id = self._tox.friend_get_public_key(friend_number)
         settings = Settings.get_instance()
-        if id in settings['write']:
+        fsize = folder_size(settings['folder']) + size
+        max_folder_size = settings['size'] * 1024 * 1024
+        if id in settings['write'] and fsize <= max_folder_size:
             path = settings['folder']
             new_file_name, i = file_name, 1
             while os.path.isfile(path + '/' + new_file_name):  # file with same name already exists

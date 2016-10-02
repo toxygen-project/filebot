@@ -31,7 +31,8 @@ class Settings(Singleton, dict):
             'delete': [],
             'master': [],
             'folder': curr_directory(),
-            'auto_rights': 'r'
+            'auto_rights': 'r',
+            'size': 500
         }
 
     def save(self):
