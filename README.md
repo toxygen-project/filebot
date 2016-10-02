@@ -1,4 +1,4 @@
-###File bot
+### File bot
 A bot which allows you to easily share files with friends and family using [Tox](https://tox.chat/)
 
 Based on [toxygen](https://github.com/xveduk/toxygen/) toxcore wrapper
@@ -8,7 +8,7 @@ Based on [toxygen](https://github.com/xveduk/toxygen/) toxcore wrapper
 - Windows
 - Linux
 
-#Install:
+# Install:
 
 ### Windows
 
@@ -37,7 +37,7 @@ Based on [toxygen](https://github.com/xveduk/toxygen/) toxcore wrapper
 5. Run app:
 ``python main.py path_to_profile``
 
-#Commands:
+# Commands:
 ```
 help - list of commands
 
@@ -74,9 +74,13 @@ message <ToxID> <message_text> - send message to friend (masters only)
 message --all <message_text> - send message to all friends (masters only)
 
 stop - stop bot (masters only)
+
+fsize <size_in_MB> - sets size of shared folder (masters only)
 ```
 
 
 Users with write access can send files to bot.
+
+Users with delete access can delete and rename files.
 
 Example of settings is [here](/settings.json)
