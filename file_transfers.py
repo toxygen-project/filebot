@@ -1,5 +1,5 @@
 from toxcore_enums_and_consts import TOX_FILE_KIND, TOX_FILE_CONTROL
-from os.path import basename, getsize, remove
+from os.path import basename, getsize
 from os import remove
 from time import time
 from tox import Tox
